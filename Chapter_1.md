@@ -68,6 +68,6 @@ int main()
 {
         alter_string ("Hello, world!\n");
 };
-
+```
  GCC stores string literals in read-only memory (.rodata section) when the program is run.
  
