@@ -71,3 +71,16 @@ int main()
 ```
  GCC stores string literals in read-only memory (.rodata section) when the program is run.
  
+ ## #59
+ What does this code do?
+ ```asm
+ _a$ = 8
+_f	PROC
+	mov	ecx, DWORD PTR _a$[esp-4]	;ecx = a
+	lea	eax, DWORD PTR [ecx*8]		;eax = ecx*8 = a*8
+	sub	eax, ecx			;eax = ecx - eax = 7*a
+	ret	0
+_f	ENDP
+ ```
+ 
+ 
