@@ -129,4 +129,43 @@ $LL3@s:
 }
  ```
  
+ ## #63
+ ```asm
+ 
+m:
+	fldz								;st0 = 0.0
+	xor	r10d, r10d						;r10d = 0
+.L2:
+	lea	r9, [rdi+r10]						;[r9] = x[r10]
+	xor	r8d, r8d						;r8d = 0
+.L7:
+	lea	rcx, [rsi+r8]						;[rcx] = y[r8] 
+	fld	st(0)							;
+	mov	QWORD PTR [rdx+r8], 0					;
+	xor	eax, eax
+.L4:
+	fld	QWORD PTR [rcx]						;st0 = y[r8]
+	add	rcx, 2400						;rcx += 2400
+	fmul	QWORD PTR [r9+rax]					;st0 = y[r8]*x[r10]
+	add	rax, 8							;rax += 8
+	cmp	rax, 800						;rax ? 800
+	faddp	st(1), st						;st1 = st0 + st1
+	fstp	QWORD PTR [rsp-16]					;
+	fld	QWORD PTR [rsp-16]
+	fst	QWORD PTR [rdx+r8]
+	jne	.L4
+	fstp	st(0)
+	add	r8, 8
+	cmp	r8, 2400
+	jne	.L7
+	add	r10, 800						;r10 += 800
+	add	rdx, 2400						;rdx += 2400
+	cmp	r10, 160000						;r10 ? 160000
+	jne	.L2							;
+	fstp	st(0)
+	ret
+ ```
+ ```c
+ ```
+ 
  
