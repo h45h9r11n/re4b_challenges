@@ -83,5 +83,50 @@ _f	PROC
 _f	ENDP
  ```
  
+ ## #62
+ ```asm
+ _a$ = 8        ; size = 4
+_b$ = 12       ; size = 4
+_c$ = 16       ; size = 4
+?s@@YAXPAN00@Z PROC     ; s, COMDAT
+    mov    eax, DWORD PTR _b$[esp-4]			;eax = addr of b[]
+    mov    ecx, DWORD PTR _a$[esp-4]			;ecx = addr of a[]
+    mov    edx, DWORD PTR _c$[esp-4]			;edx = addr of c[]
+    push   esi
+    push   edi
+    sub    ecx, eax					;ecx = x
+    sub    edx, eax					;edx = y
+    mov    edi, 200     ; 000000c8H			;edi = 200
+$LL6@s:
+    push   100          ; 00000064H
+    pop    esi						;esi = 100
+$LL3@s:
+    fld    QWORD PTR [ecx+eax]				;st0 = b[x]
+    fadd   QWORD PTR [eax]				;st0 = b[x] + b[0]
+    fstp   QWORD PTR [edx+eax]				;b[y] = b[x] + b[0]
+    add    eax, 8					;
+    dec    esi						;esi--
+    jne    SHORT $LL3@s
+    dec    edi						;edi--
+    jne    SHORT $LL6@s
+    pop    edi
+    pop    esi
+    ret    0
+?s@@YAXPAN00@Z ENDP     ; s
+ ```
+ 
+ ```c
+ void f(float *a, float *b, float *c)
+{
+    long x = b - a;
+    long y = b - c;
+    for (int i = 200; i > 0; i--){
+        for (int j = 100; j > 0; j--){
+            b[y] = b[x] + b[0];
+            b += 8;
+        }
+    }
+}
+ ```
  
  
