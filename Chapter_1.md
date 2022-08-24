@@ -191,3 +191,32 @@ long double f(long double* array, int x, int y){
     return array[y + 120*x];
 }
  ```
+ 
+ ## #64
+ ```asm
+ _array$ = 8	
+_x$ = 12	
+_y$ = 16	
+_z$ = 20	
+_f	PROC
+	mov	eax, DWORD PTR _x$[esp-4]		;eax = x
+	mov	edx, DWORD PTR _y$[esp-4]		;edx = y
+	mov	ecx, eax				;ecx = x
+	shl	ecx, 4					;ecx = 16x
+	sub	ecx, eax				;ecx = 16x - x = 15x
+	lea	eax, DWORD PTR [edx+ecx*4]		;eax = y + 60x
+	mov	ecx, DWORD PTR _array$[esp-4]		;ecx = addr of array
+	lea	eax, DWORD PTR [eax+eax*4]		;eax = 5*(y+60x)
+	shl	eax, 4					;eax = 16*5*(y+60x)
+	add	eax, DWORD PTR _z$[esp-4]		;eax += z
+	mov	eax, DWORD PTR [ecx+eax*4]		;[eax] = array[z+16*5*(y+60x)] 
+	ret	0
+_f	ENDP
+ ```
+ ```c
+int f(int* array, int x, int y, int z)
+{
+    return array[z + 16*5*(y + 15*4*x)];
+}
+ ```
+ 
