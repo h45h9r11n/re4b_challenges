@@ -167,5 +167,27 @@ m:
  ```
  ```c
  ```
+ ## #64
+ An array of array[x][y] form is accessed here. Try to determine the dimensions of the array, at least partially, by finding y.
+ ```asm
+ _array$ = 8
+_x$ = 12
+_y$ = 16
+_f	PROC
+	mov	eax, DWORD PTR _x$[esp-4]		;eax = x
+	mov	edx, DWORD PTR _y$[esp-4]		;edx = y
+	mov	ecx, eax				;ecx = x
+	shl	ecx, 4					;ecx = x*8
+	sub	ecx, eax				;ecx = eax - ecx = -7*x 
+	lea	eax, DWORD PTR [edx+ecx*8]		;eax = y - 56x
+	mov	ecx, DWORD PTR _array$[esp-4]		;ecx = addr of array
+	fld	QWORD PTR [ecx+eax*8]			;
+	ret	0
+_f	ENDP
+ ```
  
- 
+ ```c
+long double f(long double* array, int x, int y){
+    return array[y + 15*x];
+}
+ ```
