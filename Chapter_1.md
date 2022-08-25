@@ -219,4 +219,25 @@ int f(int* array, int x, int y, int z)
     return array[z + 16*5*(y + 15*4*x)];
 }
  ```
+ ## #67
+ ```asm
+ _a$ = 8
+_f	PROC
+	mov	ecx, DWORD PTR _a$[esp-4]		;ecx = a
+	mov	eax, ecx				;eax = a
+	mov	edx, ecx				;edx = a
+	shl	edx, 16		; 00000010H		;edx = a*2^16
+	and	eax, 65280	; 0000ff00H		;eax = a & 0000ff00H
+	or	eax, edx				;
+	mov	edx, ecx
+	and	edx, 16711680	; 00ff0000H
+	shr	ecx, 16		; 00000010H
+	or	edx, ecx
+	shl	eax, 8
+	shr	edx, 8
+	or	eax, edx
+	ret	0
+_f	ENDP
+ ```
+ 
  
